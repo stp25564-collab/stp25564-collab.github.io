@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมยิงเป้า</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+
+        .game-container {
+            width: 900px;
+            height: 650px;
+            background: linear-gradient(to bottom, #87CEEB 0%, #98FB98 50%, #228B22 100%);
+            position: relative;
+            border: 4px solid #8B4513;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+
+        .author {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            z-index: 1000;
+            background: rgba(0,0,0,0.4);
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 2px solid #FFD700;
+        }
+
+        .ui-panel {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            background: rgba(0,0,0,0.4);
+            color: #fff;
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px solid #FFD700;
+            z-index: 100;
+            min-width: 200px;
+        }
+
+        .score, .ammo, .time {
+            margin: 5px 0;
+            font-size: 16px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .target {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #fff 0%, #fff 20%, #ff0000 20%, #ff0000 40%, #fff 40%, #fff 60%, #ff0000 60%, #ff0000 80%, #fff 80%);
+            border-radius: 50%;
+            border: 3px solid #000;
+            cursor: crosshair;
+            animation: targetFloat 3s ease-in-out infinite;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: transform 0.1s;
+        }
+
+        .target::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 15px;
+            height: 15px;
+            background: #000;
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        .target:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes targetFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(180deg); }
+        }
+
+        .moving-target {
+            animation: moveTarget 4s linear infinite;
+        }
+
+        @keyframes moveTarget {
+            0% { left: -100px; }
+            100% { left: 1000px; }
+        }
+
+        .bullet {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #FFD700;
+            border-radius: 50%;
+            pointer-events: none;
+            box-shadow: 0 0 10px #FFD700;
+            animation: bulletTrail 0.3s linear forwards;
+        }
+
+        @keyframes bulletTrail {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0);
+                opacity: 0;
+            }
+        }
+
+        .explosion {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, #ff4444 0%, #ffaa00 50%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: explode 0.5s ease-out forwards;
+        }
+
+        @keyframes explode {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0;
+            }
+        }
+
+        .score-popup {
+            position: absolute;
+            color: #FFD700;
+            font-size: 24px;
+            font-weight: bold;
+            pointer-events: none;
+            animation: scorePopup 1s ease-out forwards;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        }
+
+        @keyframes scorePopup {
+            0% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.5) translateY(-50px);
+            }
+        }
+
+        .crosshair {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 2px solid #ff0000;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 50;
+            transform: translate(-50%, -50%);
+            opacity: 0.8;
+        }
+
+        .crosshair::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -10px;
+            width: 50px;
+            height: 2px;
+            background: #ff0000;
+            transform: translateY(-50%);
+        }
+
+        .crosshair::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: -10px;
+            width: 2px;
+            height: 50px;
+            background: #ff0000;
+            transform: translateX(-50%);
+        }
+
+        .game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            display: none;
+            z-index: 1000;
+            border: 3px solid #FFD700;
+        }
+
+        .restart-btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+        }
+
+        .instructions {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-size: 14px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            text-align: center;
+            background: rgba(0,0,0,0.4);
+            padding: 10px 20px;
+            border-radius: 15px;
+        }
+
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50px;
+            animation: cloudMove 20s linear infinite;
+        }
+
+        .cloud1 {
+            width: 80px;
+            height: 40px;
+            top: 60px;
+            left: -100px;
+        }
+
+        .cloud2 {
+            width: 60px;
+            height: 30px;
+            top: 100px;
+            left: -80px;
+            animation-delay: -10s;
+        }
+
+        @keyframes cloudMove {
+            0% { left: -100px; }
+            100% { left: 1000px; }
+        }
+
+        .powerup {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, #00ff00, #008800);
+            border: 2px solid #004400;
+            border-radius: 50%;
+            animation: powerupPulse 2s ease-in-out infinite;
+            cursor: pointer;
+        }
+
+        .powerup::before {
+            content: '+';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        @keyframes powerupPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .ammo-low {
+            animation: ammoWarning 1s ease-in-out infinite;
+        }
+
+        @keyframes ammoWarning {
+            0%, 100% { color: #fff; }
+            50% { color: #ff0000; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container" id="gameContainer">
+        <div class="author">Pattanan Tuamprajuk</div>
+        
+        <div class="ui-panel">
+            <div class="score">คะแนน: <span id="score">0</span></div>
+            <div class="ammo" id="ammoDisplay">กระสุน: <span id="ammo">20</span></div>
+            <div class="time">เวลา: <span id="time">60</span>s</div>
+        </div>
+        
+        <div class="cloud cloud1"></div>
+        <div class="cloud cloud2"></div>
+        
+        <div class="crosshair" id="crosshair"></div>
+        
+        <div class="game-over" id="gameOver">
+            <h2>เกมจบแล้ว!</h2>
+            <p>คะแนนสุดท้าย: <span id="finalScore">0</span></p>
+            <p id="gameEndReason"></p>
+            <button class="restart-btn" onclick="restartGame()">เล่นใหม่</button>
+        </div>
+        
+        <div class="instructions">
+            🎯 คลิกเพื่อยิงเป้า | เป้าแดงได้ 10 คะแนน | เป้าเคลื่อนที่ได้ 25 คะแนน | เก็บ PowerUp เพื่อเพิ่มกระสุน
+        </div>
+    </div>
+
+    <script>
+        let gameState = {
+            score: 0,
+            ammo: 20,
+            timeLeft: 60,
+            isGameOver: false,
+            targets: [],
+            powerups: [],
+            targetSpawnTimer: 0,
+            powerupSpawnTimer: 0,
+            gameTimer: null
+        };
+
+        let sounds = {
+            shoot: function() {
+                // Simple sound simulation
+                const audio = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audio.createOscillator();
+                const gainNode = audio.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audio.destination);
+                
+                oscillator.frequency.setValueAtTime(800, audio.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(200, audio.currentTime + 0.1);
+                
+                gainNode.gain.setValueAtTime(0.3, audio.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audio.currentTime + 0.1);
+                
+                oscillator.start(audio.currentTime);
+                oscillator.stop(audio.currentTime + 0.1);
+            },
+            
+            hit: function() {
+                const audio = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audio.createOscillator();
+                const gainNode = audio.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audio.destination);
+                
+                oscillator.frequency.setValueAtTime(1000, audio.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(1500, audio.currentTime + 0.2);
+                
+                gainNode.gain.setValueAtTime(0.4, audio.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audio.currentTime + 0.2);
+                
+                oscillator.start(audio.currentTime);
+                oscillator.stop(audio.currentTime + 0.2);
+            }
+        };
+
+        function init() {
+            updateCrosshair();
+            startGameTimer();
+            gameLoop();
+            
+            document.addEventListener('mousemove', updateCrosshair);
+            document.addEventListener('click', shoot);
+        }
+
+        function updateCrosshair(e) {
+            if (e) {
+                const container = document.getElementById('gameContainer');
+                const rect = container.getBoundingClientRect();
+                const crosshair = document.getElementById('crosshair');
+                
+                crosshair.style.left = (e.clientX - rect.left) + 'px';
+                crosshair.style.top = (e.clientY - rect.top) + 'px';
+            }
+        }
+
+        function shoot(e) {
+            if (gameState.isGameOver || gameState.ammo <= 0) return;
+            
+            e.preventDefault();
+            sounds.shoot();
+            
+            gameState.ammo--;
+            updateUI();
+            
+            const container = document.getElementById('gameContainer');
+            const rect = container.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+            
+            // Create bullet visual effect
+            createBullet(clickX, clickY);
+            
+            // Check for target hits
+            let hitTarget = false;
+            gameState.targets.forEach((target, index) => {
+                const targetRect = target.element.getBoundingClientRect();
+                const containerRect = container.getBoundingClientRect();
+                
+                const targetX = targetRect.left - containerRect.left + targetRect.width / 2;
+                const targetY = targetRect.top - containerRect.top + targetRect.height / 2;
+                
+                const distance = Math.sqrt(Math.pow(clickX - targetX, 2) + Math.pow(clickY - targetY, 2));
+                
+                if (distance <= 40) {
+                    hitTarget = true;
+                    sounds.hit();
+                    
+                    const points = target.isMoving ? 25 : 10;
+                    gameState.score += points;
+                    
+                    createExplosion(targetX, targetY);
+                    createScorePopup(targetX, targetY, points);
+                    
+                    target.element.remove();
+                    gameState.targets.splice(index, 1);
+                }
+            });
+            
+            // Check for powerup hits
+            gameState.powerups.forEach((powerup, index) => {
+                const powerupRect = powerup.element.getBoundingClientRect();
+                const containerRect = container.getBoundingClientRect();
+                
+                const powerupX = powerupRect.left - containerRect.left + powerupRect.width / 2;
+                const powerupY = powerupRect.top - containerRect.top + powerupRect.height / 2;
+                
+                const distance = Math.sqrt(Math.pow(clickX - powerupX, 2) + Math.pow(clickY - powerupY, 2));
+                
+                if (distance <= 30) {
+                    gameState.ammo += 10;
+                    createScorePopup(powerupX, powerupY, '+10 กระสุน', '#00ff00');
+                    
+                    powerup.element.remove();
+                    gameState.powerups.splice(index, 1);
+                }
+            });
+            
+            updateUI();
+            
+            // Check game over conditions
+            if (gameState.ammo <= 0 && gameState.targets.length === 0) {
+                endGame('หมดกระสุน!');
+            }
+        }
+
+        function createBullet(x, y) {
+            const bullet = document.createElement('div');
+            bullet.className = 'bullet';
+            bullet.style.left = x + 'px';
+            bullet.style.top = y + 'px';
+            document.getElementById('gameContainer').appendChild(bullet);
+            
+            setTimeout(() => {
+                bullet.remove();
+            }, 300);
+        }
+
+        function createExplosion(x, y) {
+            const explosion = document.createElement('div');
+            explosion.className = 'explosion';
+            explosion.style.left = (x - 50) + 'px';
+            explosion.style.top = (y - 50) + 'px';
+            document.getElementById('gameContainer').appendChild(explosion);
+            
+            setTimeout(() => {
+                explosion.remove();
+            }, 500);
+        }
+
+        function createScorePopup(x, y, text, color = '#FFD700') {
+            const popup = document.createElement('div');
+            popup.className = 'score-popup';
+            popup.textContent = '+' + text;
+            popup.style.left = x + 'px';
+            popup.style.top = y + 'px';
+            popup.style.color = color;
+            document.getElementById('gameContainer').appendChild(popup);
+            
+            setTimeout(() => {
+                popup.remove();
+            }, 1000);
+        }
+
+        function createTarget(isMoving = false) {
+            const target = document.createElement('div');
+            target.className = 'target' + (isMoving ? ' moving-target' : '');
+            
+            if (isMoving) {
+                target.style.top = Math.random() * 400 + 100 + 'px';
+                target.style.left = '-100px';
+            } else {
+                target.style.left = Math.random() * 700 + 50 + 'px';
+                target.style.top = Math.random() * 400 + 100 + 'px';
+            }
+            
+            document.getElementById('gameContainer').appendChild(target);
+            
+            gameState.targets.push({
+                element: target,
+                isMoving: isMoving
+            });
+            
+            // Remove target after some time if not hit
+            setTimeout(() => {
+                if (target.parentNode) {
+                    target.remove();
+                    const index = gameState.targets.findIndex(t => t.element === target);
+                    if (index !== -1) {
+                        gameState.targets.splice(index, 1);
+                    }
+                }
+            }, isMoving ? 4000 : 5000);
+        }
+
+        function createPowerup() {
+            const powerup = document.createElement('div');
+            powerup.className = 'powerup';
+            powerup.style.left = Math.random() * 700 + 50 + 'px';
+            powerup.style.top = Math.random() * 400 + 100 + 'px';
+            
+            document.getElementById('gameContainer').appendChild(powerup);
+            
+            gameState.powerups.push({
+                element: powerup
+            });
+            
+            // Remove powerup after 8 seconds if not collected
+            setTimeout(() => {
+                if (powerup.parentNode) {
+                    powerup.remove();
+                    const index = gameState.powerups.findIndex(p => p.element === powerup);
+                    if (index !== -1) {
+                        gameState.powerups.splice(index, 1);
+                    }
+                }
+            }, 8000);
+        }
+
+        function gameLoop() {
+            if (gameState.isGameOver) return;
+            
+            gameState.targetSpawnTimer++;
+            gameState.powerupSpawnTimer++;
+            
+            // Spawn regular targets
+            if (gameState.targetSpawnTimer > 120) {
+                createTarget(Math.random() < 0.3); // 30% chance for moving target
+                gameState.targetSpawnTimer = 0;
+            }
+            
+            // Spawn powerups less frequently
+            if (gameState.powerupSpawnTimer > 600 && gameState.ammo < 15) {
+                createPowerup();
+                gameState.powerupSpawnTimer = 0;
+            }
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        function startGameTimer() {
+            gameState.gameTimer = setInterval(() => {
+                gameState.timeLeft--;
+                updateUI();
+                
+                if (gameState.timeLeft <= 0) {
+                    endGame('หมดเวลา!');
+                }
+            }, 1000);
+        }
+
+        function updateUI() {
+            document.getElementById('score').textContent = gameState.score;
+            document.getElementById('ammo').textContent = gameState.ammo;
+            document.getElementById('time').textContent = gameState.timeLeft;
+            
+            // Warning for low ammo
+            const ammoDisplay = document.getElementById('ammoDisplay');
+            if (gameState.ammo <= 5) {
+                ammoDisplay.classList.add('ammo-low');
+            } else {
+                ammoDisplay.classList.remove('ammo-low');
+            }
+        }
+
+        function endGame(reason) {
+            gameState.isGameOver = true;
+            clearInterval(gameState.gameTimer);
+            
+            document.getElementById('finalScore').textContent = gameState.score;
+            document.getElementById('gameEndReason').textContent = reason;
+            document.getElementById('gameOver').style.display = 'block';
+        }
+
+        function restartGame() {
+            // Reset game state
+            gameState = {
+                score: 0,
+                ammo: 20,
+                timeLeft: 60,
+                isGameOver: false,
+                targets: [],
+                powerups: [],
+                targetSpawnTimer: 0,
+                powerupSpawnTimer: 0,
+                gameTimer: null
+            };
+            
+            // Clear all targets and powerups
+            document.querySelectorAll('.target, .powerup, .explosion, .score-popup, .bullet').forEach(el => {
+                el.remove();
+            });
+            
+            // Hide game over screen
+            document.getElementById('gameOver').style.display = 'none';
+            
+            // Restart game
+            updateUI();
+            startGameTimer();
+            gameLoop();
+        }
+
+        // Initialize game when page loads
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
