@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>โปรไฟล์ของ ฟ้า - พัทธนันท์</title>
+    <!-- Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Base styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7e9f3;
+            color: #4a4a4a;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* Hello Kitty theme colors */
+        .bg-kitty-pink {
+            background-color: #ffc0cb;
+        }
+        .text-kitty-pink {
+            color: #ffc0cb;
+        }
+        .border-kitty-pink {
+            border-color: #ffc0cb;
+        }
+
+        /* Page transition animation */
+        .page {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.7s ease-in-out, transform 0.7s ease-in-out;
+            width: 100%;
+            max-width: 800px;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+        .page.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Navigation link hover animation */
+        .nav-link {
+            transition: all 0.3s ease-in-out;
+            position: relative;
+        }
+        .nav-link:hover {
+            color: #f7e9f3;
+            transform: translateY(-3px) scale(1.05);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Button animation */
+        .animated-button {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .animated-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .animated-button:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        /* Floating heart animation */
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0) rotate(0deg); opacity: 1; }
+        }
+
+        .heart {
+            animation: float 4s ease-in-out infinite;
+        }
+        .heart:nth-child(2) { animation-delay: 1s; }
+        .heart:nth-child(3) { animation-delay: 2s; }
+
+        /* Hello Kitty image animation */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .hello-kitty-img {
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        /* Grid for cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-100 to-pink-200 min-h-screen p-4 flex flex-col items-center">
+
+    <!-- Floating Heart Decorations -->
+    <div class="absolute top-10 left-10 text-xl text-red-400 heart">💖</div>
+    <div class="absolute bottom-20 right-20 text-xl text-pink-400 heart">🌸</div>
+    <div class="absolute top-1/4 right-10 text-xl text-purple-400 heart">✨</div>
+
+    <!-- Navigation Bar -->
+    <nav class="w-full max-w-lg mx-auto bg-white bg-opacity-70 backdrop-blur-md rounded-full shadow-lg p-3 my-8 z-10">
+        <ul class="flex justify-around items-center space-x-2 text-sm md:text-base">
+            <li><a href="#home" class="nav-link text-center px-4 py-2 rounded-full font-bold text-gray-700 hover:bg-kitty-pink">หน้าหลัก</a></li>
+            <li><a href="#about" class="nav-link text-center px-4 py-2 rounded-full font-bold text-gray-700 hover:bg-kitty-pink">เกี่ยวกับฉัน</a></li>
+            <li><a href="#interests" class="nav-link text-center px-4 py-2 rounded-full font-bold text-gray-700 hover:bg-kitty-pink">ความสนใจ</a></li>
+            <li><a href="#education" class="nav-link text-center px-4 py-2 rounded-full font-bold text-gray-700 hover:bg-kitty-pink">การศึกษา</a></li>
+            <li><a href="#contact" class="nav-link text-center px-4 py-2 rounded-full font-bold text-gray-700 hover:bg-kitty-pink">ติดต่อ</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="w-full flex-grow flex justify-center items-center">
+        <!-- Home Page -->
+        <section id="home" class="page active bg-white bg-opacity-90 rounded-3xl shadow-2xl text-center">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-kitty-pink mb-4 drop-shadow-md">
+                สวัสดีค่ะ! 👋
+            </h1>
+            <p class="text-xl md:text-2xl font-semibold text-gray-800 mb-6">
+                ฉันชื่อ <span class="text-kitty-pink">พัทธนันท์ ท่วมประจักษ์</span>
+            </p>
+            <p class="text-lg md:text-xl text-gray-600 mb-8">
+                ชื่อเล่น <span class="font-bold text-kitty-pink">ฟ้า</span> ค่ะ 💖
+            </p>
+            <!-- Hello Kitty Placeholder Image -->
+            <img src="https://placehold.co/200x200/ffc0cb/ffffff?text=Hello+Kitty" alt="Hello Kitty Image" class="hello-kitty-img mx-auto rounded-full shadow-lg">
+        </section>
+
+        <!-- About Me Page -->
+        <section id="about" class="page bg-white bg-opacity-90 rounded-3xl shadow-2xl p-8">
+            <h2 class="text-3xl md:text-4xl font-bold text-kitty-pink mb-6 text-center">
+                เกี่ยวกับฉัน
+            </h2>
+            <div class="flex flex-col md:flex-row items-center md:space-x-8">
+                <img src="https://placehold.co/150x150/ffc0cb/ffffff?text=Fah" alt="Profile Picture" class="rounded-full shadow-lg mb-4 md:mb-0">
+                <div class="text-lg text-gray-700 text-center md:text-left">
+                    <p class="mb-2">
+                        สวัสดีค่ะ! ฉันชื่อ <span class="font-bold">พัทธนันท์ ท่วมประจักษ์</span>
+                        ชื่อเล่นว่า <span class="font-bold">ฟ้า</span> ค่ะ
+                    </p>
+                    <p class="mb-2">
+                        เป็นคนที่มีความสนใจหลากหลายและชอบเรียนรู้สิ่งใหม่ๆ อยู่เสมอค่ะ
+                    </p>
+                    <p>
+                        ยินดีที่ได้รู้จักทุกคนนะคะ! 😊
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interests Page -->
+        <section id="interests" class="page bg-white bg-opacity-90 rounded-3xl shadow-2xl p-8">
+            <h2 class="text-3xl md:text-4xl font-bold text-kitty-pink mb-6 text-center">
+                ความสนใจ
+            </h2>
+            <div class="card-grid">
+                <!-- Sports Card -->
+                <div class="bg-gray-50 bg-opacity-50 p-6 rounded-2xl shadow-md text-center animated-button">
+                    <span class="text-4xl">⚽</span>
+                    <h3 class="text-xl font-semibold mt-2 mb-2">กีฬา</h3>
+                    <p class="text-sm text-gray-600">
+                        ฉันชื่นชอบการเล่นกีฬาเป็นอย่างมาก เพราะนอกจากจะทำให้ร่างกายแข็งแรงแล้ว ยังช่วยให้ฉันได้รู้จักการทำงานเป็นทีมด้วยค่ะ
+                    </p>
+                </div>
+                <!-- Invention Card -->
+                <div class="bg-gray-50 bg-opacity-50 p-6 rounded-2xl shadow-md text-center animated-button">
+                    <span class="text-4xl">💡</span>
+                    <h3 class="text-xl font-semibold mt-2 mb-2">สิ่งประดิษฐ์</h3>
+                    <p class="text-sm text-gray-600">
+                        การได้ลงมือทำสิ่งประดิษฐ์ต่างๆ เป็นงานอดิเรกที่ฉันรักมากค่ะ
+                        มันสนุกที่ได้สร้างสรรค์อะไรใหม่ๆ ขึ้นมาด้วยตัวเอง
+                    </p>
+                </div>
+                <!-- Gaming Card -->
+                <div class="bg-gray-50 bg-opacity-50 p-6 rounded-2xl shadow-md text-center animated-button">
+                    <span class="text-4xl">🎮</span>
+                    <h3 class="text-xl font-semibold mt-2 mb-2">เล่นเกม</h3>
+                    <p class="text-sm text-gray-600">
+                        เวลาว่างของฉันส่วนใหญ่จะหมดไปกับการเล่นเกม
+                        ไม่ว่าจะเป็นเกมบนคอมพิวเตอร์หรือโทรศัพท์มือถือค่ะ
+                    </p>
+                </div>
+
+                <!-- Gemini API Feature Card -->
+                <div class="bg-gray-50 bg-opacity-50 p-6 rounded-2xl shadow-md text-center">
+                    <span class="text-4xl">🤖</span>
+                    <h3 class="text-xl font-semibold mt-2 mb-2">✨ รับแรงบันดาลใจจาก AI ✨</h3>
+                    <p id="gemini-text" class="text-sm text-gray-600 mb-4 h-16 flex items-center justify-center">
+                        กดปุ่มด้านล่างเพื่อสร้างข้อความ!
+                    </p>
+                    <button id="generate-btn" class="animated-button px-6 py-2 rounded-full font-bold bg-kitty-pink text-white shadow-md hover:bg-opacity-80 transition-colors duration-200">
+                        ✨ สร้างข้อความใหม่ ✨
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Education Page -->
+        <section id="education" class="page bg-white bg-opacity-90 rounded-3xl shadow-2xl p-8">
+            <h2 class="text-3xl md:text-4xl font-bold text-kitty-pink mb-6 text-center">
+                การศึกษา
+            </h2>
+            <div class="flex flex-col items-center">
+                <span class="text-5xl mb-4">🏫</span>
+                <p class="text-lg md:text-xl text-gray-700 font-semibold mb-2">
+                    ปัจจุบันฉันกำลังศึกษาอยู่ที่
+                </p>
+                <p class="text-2xl md:text-3xl text-kitty-pink font-extrabold drop-shadow-md">
+                    โรงเรียนสุรธรรมพิทักษ์
+                </p>
+            </div>
+        </section>
+
+        <!-- Contact Page -->
+        <section id="contact" class="page bg-white bg-opacity-90 rounded-3xl shadow-2xl p-8 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-kitty-pink mb-6">
+                ยินดีที่ได้รู้จักค่ะ!
+            </h2>
+            <p class="text-lg text-gray-700 mb-8">
+                ถ้ามีโอกาสหวังว่าจะได้ทำความรู้จักกันมากขึ้นนะคะ
+                ขอบคุณที่เข้ามาเยี่ยมชมค่ะ
+            </p>
+            <span class="text-6xl animate-bounce">🎀</span>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const pages = document.querySelectorAll('.page');
+
+            // Function to show the correct page
+            function showPage(pageId) {
+                pages.forEach(page => {
+                    page.classList.remove('active');
+                });
+                const activePage = document.querySelector(pageId);
+                if (activePage) {
+                    activePage.classList.add('active');
+                }
+            }
+
+            // Add click event listener to each navigation link
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const pageId = link.getAttribute('href');
+                    showPage(pageId);
+                });
+            });
+
+            // Show the initial page based on URL hash or default to home
+            const initialPageId = window.location.hash || '#home';
+            showPage(initialPageId);
+
+
+            // --- Gemini API Integration ---
+            const generateBtn = document.getElementById('generate-btn');
+            const geminiTextElement = document.getElementById('gemini-text');
+
+            if (generateBtn) {
+                generateBtn.addEventListener('click', async () => {
+                    // Show a loading message
+                    geminiTextElement.textContent = "กำลังสร้างข้อความ...";
+                    generateBtn.disabled = true;
+
+                    // The prompt for the Gemini LLM
+                    const prompt = "Generate a single, short, creative, and positive fun fact or inspirational quote related to sports, invention, or gaming. The text must be in Thai. For example, 'กีฬาไม่ได้เป็นแค่การแข่งขัน แต่คือการฝึกฝนวินัยในตัวเอง'";
+
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                    const payload = { contents: chatHistory };
+                    const apiKey = "" // If you want to use models other than gemini-2.5-flash-preview-05-20 or imagen-3.0-generate-002, provide an API key here. Otherwise, leave this as-is.
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+                    try {
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        // Check for successful response
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+
+                        const result = await response.json();
+
+                        // Parse the response from the LLM
+                        if (result.candidates && result.candidates.length > 0 &&
+                            result.candidates[0].content && result.candidates[0].content.parts &&
+                            result.candidates[0].content.parts.length > 0) {
+                            const text = result.candidates[0].content.parts[0].text;
+                            geminiTextElement.textContent = text;
+                        } else {
+                            geminiTextElement.textContent = "ไม่สามารถสร้างข้อความได้ ลองอีกครั้งในภายหลัง";
+                        }
+                    } catch (error) {
+                        console.error('Error calling Gemini API:', error);
+                        geminiTextElement.textContent = "เกิดข้อผิดพลาดในการเชื่อมต่อ ลองอีกครั้งค่ะ";
+                    } finally {
+                        generateBtn.disabled = false;
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
